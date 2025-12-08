@@ -13,6 +13,21 @@ with AI coding assistants like Claude Code.
 - **User Roles** - Admin and Editor roles with different permissions
 - **Modern Frontend** - Clean, editorial-style design using DaisyUI 5, Tailwind CSS 4, and Lucide Icons
 
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%">
+      <p align="center"><strong>Homepage</strong></p>
+      <img src="https://github.com/user-attachments/assets/0373f16e-44f2-47f4-bc41-a735de13f263" alt="Homepage" />
+    </td>
+    <td width="50%">
+      <p align="center"><strong>Admin Panel</strong></p>
+      <img src="https://github.com/user-attachments/assets/54f17fb7-ee7f-4291-b1aa-0bb3be35cbc5" alt="Admin Panel" />
+    </td>
+  </tr>
+</table>
+
 ## Requirements
 
 - PHP 8.3+
