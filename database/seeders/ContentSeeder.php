@@ -280,7 +280,7 @@ class ContentSeeder extends Seeder
 
                 ArticleView::create([
                     'article_id' => $article->id,
-                    'ip_address' => rand(1, 255) . '.' . rand(0, 255) . '.' . rand(0, 255) . '.' . rand(1, 255),
+                    'ip_address' => rand(1, 255).'.'.rand(0, 255).'.'.rand(0, 255).'.'.rand(1, 255),
                     'user_agent' => $userAgents[array_rand($userAgents)],
                     'referer' => $referers[array_rand($referers)],
                     'viewed_at' => $date->copy()->setTime($hour, $minute, $second),
