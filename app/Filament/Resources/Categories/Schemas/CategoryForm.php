@@ -21,7 +21,7 @@ class CategoryForm
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
+                            ->afterStateUpdated(fn (callable $state, callable $set) => $set('slug', Str::slug($state))),
                         TextInput::make('slug')
                             ->required()
                             ->maxLength(255)
@@ -31,8 +31,7 @@ class CategoryForm
                             ->columnSpanFull(),
                         Toggle::make('is_active')
                             ->default(true),
-                    ])
-                    ->columns(2),
-            ]);
+                    ])->columns(2),
+            ])->columns(1);
     }
 }
