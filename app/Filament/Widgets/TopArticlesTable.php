@@ -29,7 +29,7 @@ class TopArticlesTable extends TableWidget
                 ImageColumn::make('featured_image')
                     ->label('')
                     ->circular()
-                    ->defaultImageUrl(fn (Article $record) => 'https://ui-avatars.com/api/?name='.urlencode($record->title).'&background=random'),
+                    ->defaultImageUrl(fn (Article $record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->title) . '&background=random'),
                 TextColumn::make('title')
                     ->searchable()
                     ->limit(40)

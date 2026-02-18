@@ -13,8 +13,7 @@ class HomeController extends Controller
     {
         $articles = Article::published()->with('category')->latest('published_at')->take(6)->get();
         $pages = Page::published()->roots()->orderBy('sort_order')->get();
-        $categories = Category::where('is_active', true)->whereHas('articles', fn ($q) => $q->published())->withCount(['articles' => fn ($q) => $q->published()])->get();
-
+        $categories = Category::where('is_active', true)->whereHas('articles', fn($q) => $q->published())->withCount(['articles' => fn($q) => $q->published()])->get();
         return view('frontend.home', compact('articles', 'pages', 'categories'));
     }
 }

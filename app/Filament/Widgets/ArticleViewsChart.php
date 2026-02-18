@@ -27,7 +27,6 @@ class ArticleViewsChart extends ChartWidget
     {
         $data = collect(range(29, 0))->map(function ($daysAgo) {
             $date = Carbon::today()->subDays($daysAgo);
-
             return [
                 'date' => $date->format('M d'),
                 'count' => ArticleView::whereDate('viewed_at', $date)->count(),

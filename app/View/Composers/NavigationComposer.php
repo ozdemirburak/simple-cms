@@ -21,7 +21,7 @@ class NavigationComposer
             ->get();
 
         $view->with([
-            'navPages' => $pages->filter(fn ($p) => ! in_array($p->slug, self::$footerOnlySlugs)),
+            'navPages' => $pages->filter(fn ($p) => !in_array($p->slug, self::$footerOnlySlugs)),
             'footerPages' => $pages->filter(fn ($p) => in_array($p->slug, self::$footerOnlySlugs)),
         ]);
     }
