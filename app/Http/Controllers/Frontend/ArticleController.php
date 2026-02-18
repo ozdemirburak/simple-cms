@@ -10,6 +10,7 @@ class ArticleController extends Controller
     public function index()
     {
         $articles = Article::published()->with('category')->latest('published_at')->paginate(12);
+
         return view('frontend.articles.index', compact('articles'));
     }
 

@@ -38,11 +38,11 @@ class ListMedia extends ListRecords
                 ])
                 ->action(function (array $data): void {
                     $mediaItem = MediaItem::create([
-                        'name' => $data['name'] ?? 'Uploaded ' . now()->format('Y-m-d H:i'),
+                        'name' => $data['name'] ?? 'Uploaded '.now()->format('Y-m-d H:i'),
                     ]);
 
                     foreach ($data['images'] as $image) {
-                        $mediaItem->addMedia(storage_path('app/private/livewire-tmp/' . $image))
+                        $mediaItem->addMedia(storage_path('app/private/livewire-tmp/'.$image))
                             ->toMediaCollection('images');
                     }
 

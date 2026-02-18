@@ -4,8 +4,8 @@ namespace App\Filament\Resources\Pages\Schemas;
 
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -17,33 +17,35 @@ class PageForm
     {
         return $schema
             ->components([
-                Section::make()
+                Section::make('Content')
                     ->schema([
                         TextInput::make('title')
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
+                        RichEditor::make('content')
+                            ->extraAttributes([
+                                'style' => 'min-height: 200px;',
+                            ]),
+                    ])->columns(1),
+                Section::make('Settings')
+                    ->schema([
                         TextInput::make('slug')
                             ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
+                        Textarea::make('excerpt')
+                            ->rows(3),
                         Select::make('parent_id')
                             ->relationship('parent', 'title')
                             ->searchable()
                             ->preload(),
-                        Toggle::make('is_published')
-                            ->default(false),
                         TextInput::make('sort_order')
                             ->numeric()
                             ->default(0),
-                    ])
-                    ->columns(3),
-                Section::make()
-                    ->schema([
-                        Textarea::make('excerpt')
-                            ->rows(3),
-                        RichEditor::make('content'),
+                        Toggle::make('is_published')
+                            ->default(false),
                     ]),
             ]);
     }
