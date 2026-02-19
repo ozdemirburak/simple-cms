@@ -25,12 +25,7 @@ class UsersTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('role')
-                    ->badge()
-                    ->color(fn (UserRole $state): string => match ($state) {
-                        UserRole::Admin => 'danger',
-                        UserRole::Editor => 'info',
-                    })
-                    ->sortable(),
+                    ->badge(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
