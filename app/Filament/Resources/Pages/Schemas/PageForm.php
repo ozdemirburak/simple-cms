@@ -17,33 +17,35 @@ class PageForm
     {
         return $schema
             ->components([
-                Section::make()
+                Section::make('Page Content')
                     ->schema([
                         TextInput::make('title')
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
-                        TextInput::make('slug')
-                            ->required()
-                            ->maxLength(255)
-                            ->unique(ignoreRecord: true),
+                        RichEditor::make('content')
+                            ->extraAttributes([
+                                'style' => 'min-height: 300px;',
+                            ]),
+                    ]),
+                Section::make('Settings')
+                    ->schema([
                         Select::make('parent_id')
                             ->relationship('parent', 'title')
                             ->searchable()
                             ->preload(),
-                        Toggle::make('is_published')
-                            ->default(false),
+                        TextInput::make('slug')
+                            ->required()
+                            ->maxLength(255)
+                            ->unique(ignoreRecord: true),
                         TextInput::make('sort_order')
                             ->numeric()
                             ->default(0),
-                    ])
-                    ->columns(3),
-                Section::make()
-                    ->schema([
                         Textarea::make('excerpt')
                             ->rows(3),
-                        RichEditor::make('content'),
+                        Toggle::make('is_published')
+                            ->default(false),
                     ]),
             ]);
     }
