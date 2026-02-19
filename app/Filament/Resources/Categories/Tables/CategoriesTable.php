@@ -21,7 +21,8 @@ class CategoriesTable
                 TextColumn::make('slug')
                     ->searchable(),
                 IconColumn::make('is_active')
-                    ->boolean(),
+                    ->boolean()
+                    ->alignCenter(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
