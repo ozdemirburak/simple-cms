@@ -57,7 +57,7 @@ class UserTest extends TestCase
 
     public function test_user_role_enum_has_labels(): void
     {
-        $this->assertEquals('Admin', UserRole::Admin->label());
-        $this->assertEquals('Editor', UserRole::Editor->label());
+        $this->assertEquals('Admin', UserRole::Admin->getLabel());
+        $this->assertEquals('Editor', UserRole::Editor->getLabel());
     }
 }
