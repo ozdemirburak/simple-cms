@@ -15,7 +15,6 @@
     <section class="container mx-auto px-6 py-12">
         @if($articles->count())
             <!-- Category Filter -->
-            @php $categories = \App\Models\Category::where('is_active', true)->whereHas('articles', fn($q) => $q->published())->withCount(['articles' => fn($q) => $q->published()])->get(); @endphp
             @if($categories->count())
                 <div class="flex flex-wrap gap-2 mb-10">
                     <span class="text-sm text-base-content/50 py-2 mr-2">{{ __('frontend.articles.filter_by_topic') }}</span>
@@ -47,7 +46,7 @@
                                     @if($article->category)
                                         <span class="badge badge-ghost badge-sm">{{ $article->category->title }}</span>
                                     @endif
-                                    <span class="text-xs text-base-content/40">{{ $article->published_at->format('M d, Y') }}</span>
+                                    <span class="text-xs text-base-content/40">{{ $article->published_at?->format('M d, Y') }}</span>
                                 </div>
                                 <h2 class="font-display text-xl font-semibold mb-2 group-hover:text-primary transition-colors line-clamp-2">
                                     {{ $article->title }}
@@ -75,7 +74,7 @@
                             <a href="{{ $articles->previousPageUrl() }}" class="join-item btn">«</a>
                         @endif
 
-                        @foreach($articles->getUrlRange(1, $articles->lastPage()) as $page => $url)
+                        @foreach($articles->getUrlRange(max(1, $articles->currentPage() - 3), min($articles->lastPage(), $articles->currentPage() + 3)) as $page => $url)
                             <a href="{{ $url }}" class="join-item btn {{ $page == $articles->currentPage() ? 'btn-primary' : '' }}">{{ $page }}</a>
                         @endforeach
 

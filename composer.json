@@ -1,26 +1,28 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "ozdemirburak/simple-cms",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "A simple content management system built with Laravel, Filament, and DaisyUI.",
+    "keywords": ["laravel", "filament", "cms", "daisyui"],
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "filament/filament": "~4.3",
-        "filament/spatie-laravel-media-library-plugin": "^4.3",
-        "laravel/framework": "^12.0",
-        "laravel/tinker": "^v2.10",
-        "mallardduck/blade-lucide-icons": "^1.24"
+        "filament/filament": "^5.2",
+        "filament/spatie-laravel-media-library-plugin": "^5.2",
+        "laravel/framework": "^12.52",
+        "laravel/tinker": "^v2.11",
+        "mallardduck/blade-lucide-icons": "^1.26",
+        "stevebauman/purify": "^6.3"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.23",
+        "fakerphp/faker": "^1.24",
         "laravel/pail": "^1.2",
-        "laravel/pint": "^1.26",
-        "laravel/sail": "^1.50",
+        "laravel/pint": "^1.27",
+        "laravel/sail": "^1.53",
         "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.7",
-        "phpunit/phpunit": "^11.5.3"
+        "nunomaduro/collision": "^8.9",
+        "pestphp/pest": "^3.8",
+        "phpunit/phpunit": "^11.5"
     },
     "autoload": {
         "psr-4": {

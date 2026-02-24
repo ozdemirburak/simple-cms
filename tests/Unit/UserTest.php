@@ -1,63 +1,59 @@
 <?php
 
-namespace Tests\Unit;
-
 use App\Enums\UserRole;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class UserTest extends TestCase
-{
-    use RefreshDatabase;
+it('identifies admin users', function () {
+    $admin = createUser(UserRole::Admin);
 
-    public function test_user_is_admin(): void
-    {
-        $admin = User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@test.com',
-            'password' => bcrypt('password'),
-            'role' => UserRole::Admin,
-        ]);
+    expect($admin->isAdmin())->toBeTrue()
+        ->and($admin->isEditor())->toBeFalse();
+});
 
-        $this->assertTrue($admin->isAdmin());
-        $this->assertFalse($admin->isEditor());
-    }
+it('identifies editor users', function () {
+    $editor = createUser(UserRole::Editor);
 
-    public function test_user_is_editor(): void
-    {
-        $editor = User::create([
-            'name' => 'Editor User',
-            'email' => 'editor@test.com',
-            'password' => bcrypt('password'),
-            'role' => UserRole::Editor,
-        ]);
+    expect($editor->isEditor())->toBeTrue()
+        ->and($editor->isAdmin())->toBeFalse();
+});
 
-        $this->assertTrue($editor->isEditor());
-        $this->assertFalse($editor->isAdmin());
-    }
+it('defaults role to editor', function () {
+    $user = User::create([
+        'name' => 'New User',
+        'email' => 'new@test.com',
+        'password' => bcrypt('password'),
+    ]);
 
-    public function test_user_role_defaults_to_editor(): void
-    {
-        $user = User::create([
-            'name' => 'New User',
-            'email' => 'new@test.com',
-            'password' => bcrypt('password'),
-        ]);
+    expect($user->role)->toBe(UserRole::Editor);
+});
 
-        $this->assertEquals(UserRole::Editor, $user->role);
-        $this->assertTrue($user->isEditor());
-    }
+it('has correct enum values', function () {
+    expect(UserRole::Admin->value)->toBe('admin')
+        ->and(UserRole::Editor->value)->toBe('editor');
+});
 
-    public function test_user_role_enum_has_correct_values(): void
-    {
-        $this->assertEquals('admin', UserRole::Admin->value);
-        $this->assertEquals('editor', UserRole::Editor->value);
-    }
+it('has labels on enum', function () {
+    expect(UserRole::Admin->getLabel())->not->toBeEmpty()
+        ->and(UserRole::Editor->getLabel())->not->toBeEmpty();
+});
 
-    public function test_user_role_enum_has_labels(): void
-    {
-        $this->assertEquals('Admin', UserRole::Admin->getLabel());
-        $this->assertEquals('Editor', UserRole::Editor->getLabel());
-    }
-}
+it('does not mass-assign role', function () {
+    $user = User::create([
+        'name' => 'Test',
+        'email' => 'test@test.com',
+        'password' => bcrypt('password'),
+        'role' => UserRole::Admin,
+    ]);
+
+    expect($user->role)->toBe(UserRole::Editor);
+});
+
+it('requires admin or editor role for panel access', function () {
+    $admin = createUser(UserRole::Admin);
+    $editor = createUser(UserRole::Editor);
+
+    $panel = app(\Filament\Panel::class);
+
+    expect($admin->canAccessPanel($panel))->toBeTrue()
+        ->and($editor->canAccessPanel($panel))->toBeTrue();
+});

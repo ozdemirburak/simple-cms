@@ -1,191 +1,154 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Page;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class FrontendTest extends TestCase
-{
-    use RefreshDatabase;
+it('loads the homepage', function () {
+    $this->get('/')->assertOk()->assertSee('Simple CMS');
+});
 
-    public function test_homepage_loads_successfully(): void
-    {
-        $response = $this->get('/');
+it('displays published articles on homepage', function () {
+    $category = Category::create(['title' => 'Technology', 'slug' => 'technology', 'is_active' => true]);
 
-        $response->assertStatus(200);
-        $response->assertSee('Laravel Simple CMS');
-    }
-
-    public function test_homepage_displays_published_articles(): void
-    {
-        $category = Category::create([
-            'title' => 'Technology',
-            'slug' => 'technology',
-            'is_active' => true,
-        ]);
-
-        // Create 3 articles to trigger hero section display
-        foreach (range(1, 3) as $i) {
-            Article::create([
-                'title' => "Test Article $i",
-                'slug' => "test-article-$i",
-                'content' => 'Test content',
-                'category_id' => $category->id,
-                'is_published' => true,
-                'published_at' => now(),
-            ]);
-        }
-
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-        $response->assertSee('Test Article 1');
-    }
-
-    public function test_articles_index_page_loads(): void
-    {
-        $response = $this->get('/articles');
-
-        $response->assertStatus(200);
-        $response->assertSee('All Articles');
-    }
-
-    public function test_article_show_page_loads(): void
-    {
-        $category = Category::create([
-            'title' => 'Technology',
-            'slug' => 'technology',
-            'is_active' => true,
-        ]);
-
-        $article = Article::create([
-            'title' => 'My Test Article',
-            'slug' => 'my-test-article',
-            'content' => '<p>Article content here</p>',
+    foreach (range(1, 3) as $i) {
+        Article::create([
+            'title' => "Test Article $i",
+            'slug' => "test-article-$i",
+            'content' => 'Test content',
             'category_id' => $category->id,
             'is_published' => true,
             'published_at' => now(),
         ]);
-
-        $response = $this->get('/article/my-test-article');
-
-        $response->assertStatus(200);
-        $response->assertSee('My Test Article');
-        $response->assertSee('Article content here');
     }
 
-    public function test_article_view_records_view(): void
-    {
-        $article = Article::create([
-            'title' => 'View Test Article',
-            'slug' => 'view-test-article',
-            'content' => 'Content',
-            'is_published' => true,
-            'published_at' => now(),
-        ]);
+    $this->get('/')->assertOk()->assertSee('Test Article 1');
+});
 
-        $this->assertEquals(0, $article->views()->count());
+it('loads articles index page', function () {
+    $this->get('/articles')->assertOk()->assertSee('All Articles');
+});
 
-        $this->get('/article/view-test-article');
+it('shows a published article', function () {
+    $category = Category::create(['title' => 'Technology', 'slug' => 'technology', 'is_active' => true]);
 
-        $this->assertEquals(1, $article->views()->count());
+    Article::create([
+        'title' => 'My Test Article',
+        'slug' => 'my-test-article',
+        'content' => '<p>Article content here</p>',
+        'category_id' => $category->id,
+        'is_published' => true,
+        'published_at' => now(),
+    ]);
 
-        $this->get('/article/view-test-article');
+    $this->get('/article/my-test-article')
+        ->assertOk()
+        ->assertSee('My Test Article')
+        ->assertSee('Article content here');
+});
 
-        $this->assertEquals(2, $article->views()->count());
-    }
+it('records article views', function () {
+    $article = Article::create([
+        'title' => 'View Test',
+        'slug' => 'view-test',
+        'content' => 'Content',
+        'is_published' => true,
+        'published_at' => now(),
+    ]);
 
-    public function test_unpublished_article_returns_404(): void
-    {
-        $article = Article::create([
-            'title' => 'Draft Article',
-            'slug' => 'draft-article',
-            'content' => 'Content',
-            'is_published' => false,
-        ]);
+    expect($article->views()->count())->toBe(0);
 
-        $response = $this->get('/article/draft-article');
+    $this->get('/article/view-test');
 
-        $response->assertStatus(404);
-    }
+    expect($article->views()->count())->toBe(1);
+});
 
-    public function test_category_page_loads(): void
-    {
-        $category = Category::create([
-            'title' => 'Design',
-            'slug' => 'design',
-            'is_active' => true,
-        ]);
+it('deduplicates article views per IP', function () {
+    $article = Article::create([
+        'title' => 'Dedup Test',
+        'slug' => 'dedup-test',
+        'content' => 'Content',
+        'is_published' => true,
+        'published_at' => now(),
+    ]);
 
-        $article = Article::create([
-            'title' => 'Design Article',
-            'slug' => 'design-article',
-            'content' => 'Content',
-            'category_id' => $category->id,
-            'is_published' => true,
-            'published_at' => now(),
-        ]);
+    $this->get('/article/dedup-test');
+    $this->get('/article/dedup-test');
 
-        $response = $this->get('/category/design');
+    expect($article->views()->count())->toBe(1);
+});
 
-        $response->assertStatus(200);
-        $response->assertSee('Design');
-        $response->assertSee('Design Article');
-    }
+it('returns 404 for unpublished articles', function () {
+    Article::create([
+        'title' => 'Draft Article',
+        'slug' => 'draft-article',
+        'content' => 'Content',
+        'is_published' => false,
+    ]);
 
-    public function test_page_show_loads(): void
-    {
-        $page = Page::create([
-            'title' => 'About Us',
-            'slug' => 'about-us',
-            'content' => '<p>About us content</p>',
-            'is_published' => true,
-        ]);
+    $this->get('/article/draft-article')->assertNotFound();
+});
 
-        $response = $this->get('/page/about-us');
+it('returns 404 for nonexistent articles', function () {
+    $this->get('/article/does-not-exist')->assertNotFound();
+});
 
-        $response->assertStatus(200);
-        $response->assertSee('About Us');
-        $response->assertSee('About us content');
-    }
+it('shows category page with articles', function () {
+    $category = Category::create(['title' => 'Design', 'slug' => 'design', 'is_active' => true]);
 
-    public function test_unpublished_page_returns_404(): void
-    {
-        $page = Page::create([
-            'title' => 'Draft Page',
-            'slug' => 'draft-page',
-            'content' => 'Content',
-            'is_published' => false,
-        ]);
+    Article::create([
+        'title' => 'Design Article',
+        'slug' => 'design-article',
+        'content' => 'Content',
+        'category_id' => $category->id,
+        'is_published' => true,
+        'published_at' => now(),
+    ]);
 
-        $response = $this->get('/page/draft-page');
+    $this->get('/category/design')
+        ->assertOk()
+        ->assertSee('Design')
+        ->assertSee('Design Article');
+});
 
-        $response->assertStatus(404);
-    }
+it('returns 404 for inactive categories', function () {
+    Category::create(['title' => 'Inactive', 'slug' => 'inactive', 'is_active' => false]);
 
-    public function test_nonexistent_article_returns_404(): void
-    {
-        $response = $this->get('/article/does-not-exist');
+    $this->get('/category/inactive')->assertNotFound();
+});
 
-        $response->assertStatus(404);
-    }
+it('shows a published page', function () {
+    Page::create([
+        'title' => 'About Us',
+        'slug' => 'about-us',
+        'content' => '<p>About us content</p>',
+        'is_published' => true,
+    ]);
 
-    public function test_navigation_shows_published_pages(): void
-    {
-        $contactPage = Page::create([
-            'title' => 'Contact',
-            'slug' => 'contact',
-            'content' => 'Contact us',
-            'is_published' => true,
-        ]);
+    $this->get('/page/about-us')
+        ->assertOk()
+        ->assertSee('About Us')
+        ->assertSee('About us content');
+});
 
-        $response = $this->get('/');
+it('returns 404 for unpublished pages', function () {
+    Page::create([
+        'title' => 'Draft Page',
+        'slug' => 'draft-page',
+        'content' => 'Content',
+        'is_published' => false,
+    ]);
 
-        $response->assertStatus(200);
-        $response->assertSee('Contact');
-    }
-}
+    $this->get('/page/draft-page')->assertNotFound();
+});
+
+it('shows published pages in navigation', function () {
+    Page::create([
+        'title' => 'Contact',
+        'slug' => 'contact',
+        'content' => 'Contact us',
+        'is_published' => true,
+    ]);
+
+    $this->get('/')->assertOk()->assertSee('Contact');
+});

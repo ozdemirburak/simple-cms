@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? __('frontend.nav.home') }} - {{ __('frontend.site_name') }}</title>
+    <meta name="description" content="{{ $description ?? __('frontend.site_description') }}">
+    <link rel="canonical" href="{{ url()->current() }}">
     <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')

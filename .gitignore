@@ -7,6 +7,7 @@
 .phpunit.result.cache
 /.fleet
 /.claude
+/.playwright-mcp
 /.idea
 /.nova
 /.phpunit.cache
@@ -15,6 +16,9 @@
 /auth.json
 /node_modules
 /public/build
+/public/css/
+/public/js/
+/public/fonts/
 /public/hot
 /public/storage
 /storage/*.key

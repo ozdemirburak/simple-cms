@@ -72,7 +72,6 @@
             </div>
         </div>
     </section>
-
     @if($articles->count())
         <!-- Latest Articles -->
         <section id="latest">
@@ -102,7 +101,7 @@
                                     @if($article->category)
                                         <span class="badge badge-ghost badge-sm">{{ $article->category->title }}</span>
                                     @endif
-                                    <span class="text-base-content/40">{{ $article->published_at->format('M d, Y') }}</span>
+                                    <span class="text-base-content/40">{{ $article->published_at?->format('M d, Y') }}</span>
                                 </div>
                                 <h3 class="font-display font-semibold text-lg group-hover:text-primary transition-colors line-clamp-2">{{ $article->title }}</h3>
                                 @if($article->excerpt)
@@ -114,7 +113,6 @@
                 </div>
             </div>
         </section>
-
         <!-- Categories -->
         @if($categories->count())
             <section>

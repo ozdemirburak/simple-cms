@@ -25,12 +25,19 @@ class ArticleViewsChart extends ChartWidget
 
     protected function getData(): array
     {
-        $data = collect(range(29, 0))->map(function ($daysAgo) {
+        $startDate = Carbon::today()->subDays(29);
+
+        $viewsByDate = ArticleView::where('viewed_at', '>=', $startDate)
+            ->selectRaw('DATE(viewed_at) as date, COUNT(*) as count')
+            ->groupByRaw('DATE(viewed_at)')
+            ->pluck('count', 'date');
+
+        $data = collect(range(29, 0))->map(function ($daysAgo) use ($viewsByDate) {
             $date = Carbon::today()->subDays($daysAgo);
 
             return [
                 'date' => $date->format('M d'),
-                'count' => ArticleView::whereDate('viewed_at', $date)->count(),
+                'count' => $viewsByDate->get($date->toDateString(), 0),
             ];
         });
 

@@ -22,26 +22,28 @@ class StatsOverview extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $totalViews = ArticleView::count();
-        $todayViews = ArticleView::whereDate('viewed_at', today())->count();
-        $weekViews = ArticleView::where('viewed_at', '>=', now()->subWeek())->count();
+        return cache()->remember('dashboard_stats', 60, function () {
+            $totalViews = ArticleView::count();
+            $todayViews = ArticleView::whereDate('viewed_at', today())->count();
+            $weekViews = ArticleView::where('viewed_at', '>=', now()->subWeek())->count();
 
-        return [
-            Stat::make('Total Views', Number::abbreviate($totalViews))
-                ->description('Today: '.$todayViews.' | This week: '.$weekViews)
-                ->color('primary'),
-            Stat::make('Total Articles', Article::count())
-                ->description('Published: '.Article::where('is_published', true)->count())
-                ->color('success'),
-            Stat::make('Total Categories', Category::count())
-                ->description('Active: '.Category::where('is_active', true)->count())
-                ->color('info'),
-            Stat::make('Total Pages', Page::count())
-                ->description('Published: '.Page::where('is_published', true)->count())
-                ->color('warning'),
-            Stat::make('Total Users', User::count())
-                ->description('Admins: '.User::where('role', 'admin')->count().' | Editors: '.User::where('role', 'editor')->count())
-                ->color('gray'),
-        ];
+            return [
+                Stat::make('Total Views', Number::abbreviate($totalViews))
+                    ->description('Today: '.$todayViews.' | This week: '.$weekViews)
+                    ->color('primary'),
+                Stat::make('Total Articles', Article::count())
+                    ->description('Published: '.Article::where('is_published', true)->count())
+                    ->color('success'),
+                Stat::make('Total Categories', Category::count())
+                    ->description('Active: '.Category::where('is_active', true)->count())
+                    ->color('info'),
+                Stat::make('Total Pages', Page::count())
+                    ->description('Published: '.Page::where('is_published', true)->count())
+                    ->color('warning'),
+                Stat::make('Total Users', User::count())
+                    ->description('Admins: '.User::where('role', 'admin')->count().' | Editors: '.User::where('role', 'editor')->count())
+                    ->color('gray'),
+            ];
+        });
     }
 }

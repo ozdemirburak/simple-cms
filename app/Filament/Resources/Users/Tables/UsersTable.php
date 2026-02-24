@@ -37,11 +37,14 @@ class UsersTable
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->hidden(fn ($record) => $record->is(auth()->user())),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->deselectRecordsAfterCompletion()
+                        ->action(fn ($records) => $records->reject(fn ($r) => $r->is(auth()->user()))->each->delete()),
                 ]),
             ]);
     }

@@ -1,12 +1,12 @@
-# Laravel Simple CMS
+# Simple CMS
 
-A beginner-friendly content management system built with Laravel 12, Filament 4, DaisyUI 5, and Lucide Icons.
-Designed as a learning resource and starter template for those new to Laravel or Filament. Works great 
+A beginner-friendly content management system built with Laravel 12, Filament 5, DaisyUI 5, and Lucide Icons.
+Designed as a learning resource and starter template for those new to Laravel or Filament. Works great
 with AI coding assistants like Claude Code.
 
 ## Features
 
-- **Admin Panel** - Beautiful admin interface powered by Filament 4
+- **Admin Panel** - Beautiful admin interface powered by Filament 5
 - **Content Management** - Manage articles, categories, and pages
 - **Media Library** - Manage uploaded images with Spatie Media Library
 - **Analytics Dashboard** - Track article views with charts and statistics
@@ -40,8 +40,8 @@ with AI coding assistants like Claude Code.
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/laravel-simple-cms.git
-cd laravel-simple-cms
+git clone https://github.com/ozdemirburak/simple-cms.git
+cd simple-cms
 ```
 
 ### 2. Install PHP dependencies
@@ -553,7 +553,7 @@ Add to `lang/en/frontend.php`:
 ],
 ```
 
-### Filament 4 Important Notes
+### Filament 5 Important Notes
 
 **Component Namespaces:**
 
@@ -674,12 +674,12 @@ To add a new language:
 Run the test suite:
 
 ```bash
-./vendor/bin/phpunit
+./vendor/bin/pest
 ```
 
 The test suite includes:
-- **Unit Tests** - Model tests for Article, Category, Page, User, ArticleView
-- **Feature Tests** - Frontend routes, admin panel access, role-based permissions
+- **Unit Tests** - Models (Article, Category, Page, User), content sanitization, view tracking
+- **Feature Tests** - Frontend routes, admin panel access, admin CRUD operations, role-based permissions, security
 
 ## Commands Reference
 
@@ -695,8 +695,8 @@ php artisan db:seed            # Seed admin and editor users
 php artisan db:seed --class=ContentSeeder  # Seed sample content
 
 # Testing
-./vendor/bin/phpunit           # Run all tests
-./vendor/bin/phpunit --filter=TestName  # Run specific test
+./vendor/bin/pest              # Run all tests
+./vendor/bin/pest --filter=TestName  # Run specific test
 
 # Production
 npm run build                  # Build assets for production

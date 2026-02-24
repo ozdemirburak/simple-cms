@@ -25,7 +25,9 @@ class ArticleForm
                             ->image()
                             ->imageEditor()
                             ->disk('public')
-                            ->directory('articles'),
+                            ->directory('articles')
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+                            ->maxSize(5120),
                         TextInput::make('title')
                             ->required()
                             ->maxLength(255)

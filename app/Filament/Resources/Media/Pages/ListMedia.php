@@ -37,19 +37,37 @@ class ListMedia extends ListRecords
                         ->helperText('Max 5MB per file. Supported: JPG, PNG, GIF, WebP'),
                 ])
                 ->action(function (array $data): void {
+                    $expectedDir = realpath(storage_path('app/private/livewire-tmp'));
+
+                    $validPaths = [];
+                    foreach ($data['images'] as $image) {
+                        $path = realpath(storage_path('app/private/livewire-tmp/'.basename($image)));
+
+                        if ($path !== false && str_starts_with($path, $expectedDir.DIRECTORY_SEPARATOR)) {
+                            $validPaths[] = $path;
+                        }
+                    }
+
+                    if (empty($validPaths)) {
+                        Notification::make()
+                            ->title('No valid images to upload')
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
+
                     $mediaItem = MediaItem::create([
                         'name' => $data['name'] ?? 'Uploaded '.now()->format('Y-m-d H:i'),
                     ]);
 
-                    foreach ($data['images'] as $image) {
-                        $mediaItem->addMedia(storage_path('app/private/livewire-tmp/'.$image))
+                    foreach ($validPaths as $path) {
+                        $mediaItem->addMedia($path)
                             ->toMediaCollection('images');
                     }
 
-                    $count = count($data['images']);
-
                     Notification::make()
-                        ->title("Uploaded {$count} image(s) successfully")
+                        ->title("Uploaded ".count($validPaths)." image(s) successfully")
                         ->success()
                         ->send();
                 }),

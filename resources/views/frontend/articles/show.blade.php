@@ -22,7 +22,7 @@
                         @if($article->category)
                             <a href="{{ route('categories.show', $article->category->slug) }}" class="badge badge-primary">{{ $article->category->title }}</a>
                         @endif
-                        <span class="text-sm text-base-content/50">{{ $article->published_at->format('F d, Y') }}</span>
+                        <span class="text-sm text-base-content/50">{{ $article->published_at?->format('F d, Y') }}</span>
                         <span class="text-sm text-base-content/40">·</span>
                         <span class="text-sm text-base-content/50">{{ __('frontend.articles.min_read', ['minutes' => ceil(str_word_count(strip_tags($article->content)) / 200)]) }}</span>
                     </div>
@@ -64,7 +64,7 @@
                         <div id="share-buttons"></div>
                         <div class="flex items-center gap-2 text-base-content/50">
                             <x-lucide-eye class="h-5 w-5" />
-                            <span class="text-sm">{{ number_format($article->view_count) }} {{ Str::plural('view', $article->view_count) }}</span>
+                            <span class="text-sm">{{ number_format($article->views_count) }} {{ Str::plural('view', $article->views_count) }}</span>
                         </div>
                     </div>
                 </div>
@@ -90,7 +90,7 @@
                                                 </div>
                                                 <div class="flex-1 min-w-0">
                                                     <h4 class="font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors">{{ $other->title }}</h4>
-                                                    <p class="text-xs text-base-content/50 mt-1">{{ $other->published_at->format('M d, Y') }}</p>
+                                                    <p class="text-xs text-base-content/50 mt-1">{{ $other->published_at?->format('M d, Y') }}</p>
                                                 </div>
                                             </div>
                                         </a>

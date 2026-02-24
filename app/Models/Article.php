@@ -6,13 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
+use Stevebauman\Purify\Facades\Purify;
 
-class Article extends Model implements HasMedia
+class Article extends Model
 {
-    use InteractsWithMedia;
-
     protected $fillable = [
         'category_id',
         'title',
@@ -21,7 +18,6 @@ class Article extends Model implements HasMedia
         'content',
         'featured_image',
         'is_published',
-        'read_count',
         'published_at',
     ];
 
@@ -34,15 +30,21 @@ class Article extends Model implements HasMedia
     {
         static::creating(function (Article $article) {
             if (empty($article->slug)) {
-                $article->slug = Str::slug($article->title);
+                $baseSlug = Str::slug($article->title);
+                $slug = $baseSlug;
+                $count = 1;
+                while (Article::where('slug', $slug)->exists()) {
+                    $slug = $baseSlug.'-'.++$count;
+                }
+                $article->slug = $slug;
             }
         });
-    }
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('featured')
-            ->singleFile();
+        static::saving(function (Article $article) {
+            if ($article->isDirty('content') && $article->content) {
+                $article->content = Purify::clean($article->content);
+            }
+        });
     }
 
     public function category(): BelongsTo
@@ -59,8 +61,8 @@ class Article extends Model implements HasMedia
     {
         return $this->views()->create([
             'ip_address' => $ipAddress,
-            'user_agent' => $userAgent,
-            'referer' => $referer,
+            'user_agent' => $userAgent ? mb_substr($userAgent, 0, 255) : null,
+            'referer' => $referer ? mb_substr($referer, 0, 255) : null,
             'viewed_at' => now(),
         ]);
     }
@@ -72,8 +74,4 @@ class Article extends Model implements HasMedia
             ->where('published_at', '<=', now());
     }
 
-    public function getViewCountAttribute(): int
-    {
-        return $this->views()->count();
-    }
 }

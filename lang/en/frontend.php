@@ -2,7 +2,7 @@
 
 return [
     // Site
-    'site_name' => 'Laravel Simple CMS',
+    'site_name' => 'Simple CMS',
     'site_tagline' => 'Stories & insights that matter.',
     'site_description' => 'A curated collection of thoughtful articles exploring technology, design, lifestyle, and business.',
 

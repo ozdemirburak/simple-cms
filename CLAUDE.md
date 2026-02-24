@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A simple content management system built with Laravel 12, Filament PHP 4 (admin panel), DaisyUI 5 (frontend), and Lucide Icons. Manages Pages, Articles, Categories, and Media uploads with Spatie Media Library. Frontend is fully internationalized.
+A simple content management system built with Laravel 12, Filament PHP 5.2 (admin panel), DaisyUI 5 (frontend), and Lucide Icons. Manages Pages, Articles, Categories, and Media uploads with Spatie Media Library. Frontend is fully internationalized. Content is sanitized with stevebauman/purify to prevent XSS.
 
 ## Common Commands
 
@@ -22,8 +22,8 @@ php artisan migrate:fresh --seed  # Reset DB and seed
 php artisan db:seed       # Seed database with admin and editor users
 
 # Testing
-./vendor/bin/phpunit      # Run all tests
-./vendor/bin/phpunit --filter=TestName  # Run specific test
+./vendor/bin/pest      # Run all tests
+./vendor/bin/pest --filter=TestName  # Run specific test
 
 # Filament
 php artisan make:filament-resource ModelName --generate  # Create CRUD resource
@@ -35,13 +35,14 @@ php artisan optimize:clear  # Clear all caches
 
 ## Architecture
 
-### Admin Panel (Filament PHP 4)
+### Admin Panel (Filament PHP 5.2)
 - **Location**: `app/Filament/Resources/`
 - **Panel Provider**: `app/Providers/Filament/AdminPanelProvider.php`
 - **Access**: `/admin` (admin: admin@admin.com / password, editor: editor@editor.com / password)
-- Resources follow Filament v4 structure with separate Schemas/ and Tables/ directories
+- Resources follow Filament v5 structure with separate Schemas/ and Tables/ directories
+- `canAccessPanel()` restricts access to admin and editor roles only
 
-### Filament 4 Resource Property Types
+### Filament 5 Resource Property Types
 When creating Filament resources, use these property type declarations:
 ```php
 protected static ?string $model = Model::class;
@@ -49,10 +50,11 @@ protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocu
 protected static ?int $navigationSort = 1;
 ```
 
-Note: In Filament 4, `$navigationIcon` uses `BackedEnum` (not `UnitEnum`). Import with `use BackedEnum;`.
+Note: In Filament 5, `$navigationIcon` uses `BackedEnum` (not `UnitEnum`). Import with `use BackedEnum;`.
+Note: `$navigationGroup` still uses `\UnitEnum|string|null` type (PHP property variance requirement).
 
-### Filament 4 Component Namespaces
-**IMPORTANT**: In Filament 4, layout/structural components moved to `Filament\Schemas\Components`:
+### Filament 5 Component Namespaces
+**IMPORTANT**: In Filament 5, layout/structural components are in `Filament\Schemas\Components`:
 ```php
 // Layout components - in Schemas\Components (NOT Forms\Components!)
 use Filament\Schemas\Components\Grid;
@@ -86,8 +88,8 @@ use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Utilities\Get;
 ```
 
-### Filament 4 Resource Directory Structure
-When creating a resource, Filament 4 generates this structure:
+### Filament 5 Resource Directory Structure
+When creating a resource, Filament 5 generates this structure:
 ```
 app/Filament/Resources/
 └── Customers/
@@ -102,7 +104,7 @@ app/Filament/Resources/
         └── CustomersTable.php
 ```
 
-### Filament 4 Form Schema Pattern
+### Filament 5 Form Schema Pattern
 ```php
 // In Schemas/CustomerForm.php
 namespace App\Filament\Resources\Customers\Schemas;
@@ -123,7 +125,7 @@ class CustomerForm
 }
 ```
 
-### Filament 4 Widget Properties
+### Filament 5 Widget Properties
 Widget class properties are **instance properties**, NOT static:
 ```php
 // CORRECT - instance properties
@@ -136,7 +138,7 @@ protected int|string|array $columnSpan = 'full';
 // protected static ?string $heading = 'Title';  // This will error!
 ```
 
-### Filament 4 Panel Configuration
+### Filament 5 Panel Configuration
 ```php
 use Filament\Support\Enums\Width;
 
@@ -150,7 +152,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-### Filament 4 Hiding Fields by Operation
+### Filament 5 Hiding Fields by Operation
 ```php
 use Filament\Support\Enums\Operation;
 
@@ -180,12 +182,20 @@ TextInput::make('password')
 Uses simple role field with `App\Enums\UserRole` enum:
 - **Admin**: Full access, can manage users
 - **Editor**: Can manage articles, categories, pages (no user management)
+- `role` is NOT mass-assignable. Set it explicitly: `$user->role = UserRole::Admin; $user->save();`
 
 ```php
 // Check role
 $user->isAdmin();  // true if admin
 $user->isEditor(); // true if editor
 ```
+
+### Security Patterns
+- **HTML Sanitization**: Article and Page content is sanitized via `stevebauman/purify` on save to prevent stored XSS
+- **View Deduplication**: Article views are deduplicated per IP per 30 minutes via cache
+- **Route Constraints**: All slug routes have `[a-z0-9\-]+` regex constraints
+- **File Upload Validation**: Featured images require explicit MIME type allowlist
+- **Mass Assignment**: `role` field is excluded from `$fillable` on User model to prevent privilege escalation
 
 ### Database
 - SQLite by default (`database/database.sqlite`)

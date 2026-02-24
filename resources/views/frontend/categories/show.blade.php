@@ -51,7 +51,7 @@
                                 @endif
                             </div>
                             <div class="p-6">
-                                <span class="text-xs text-base-content/40">{{ $article->published_at->format('M d, Y') }}</span>
+                                <span class="text-xs text-base-content/40">{{ $article->published_at?->format('M d, Y') }}</span>
                                 <h2 class="font-display text-xl font-semibold mt-2 mb-2 group-hover:text-primary transition-colors line-clamp-2">
                                     {{ $article->title }}
                                 </h2>
@@ -82,7 +82,7 @@
                             </a>
                         @endif
 
-                        @foreach($articles->getUrlRange(1, $articles->lastPage()) as $page => $url)
+                        @foreach($articles->getUrlRange(max(1, $articles->currentPage() - 3), min($articles->lastPage(), $articles->currentPage() + 3)) as $page => $url)
                             <a href="{{ $url }}" class="join-item btn {{ $page == $articles->currentPage() ? 'btn-primary' : '' }}">{{ $page }}</a>
                         @endforeach
 
@@ -115,13 +115,6 @@
     </section>
 
     <!-- Other Categories -->
-    @php
-        $otherCategories = \App\Models\Category::where('is_active', true)
-            ->where('id', '!=', $category->id)
-            ->whereHas('articles', fn($q) => $q->published())
-            ->withCount(['articles' => fn($q) => $q->published()])
-            ->get();
-    @endphp
     @if($otherCategories->count())
         <section class="bg-base-200/30 border-t border-base-200 py-12">
             <div class="container mx-auto px-6">

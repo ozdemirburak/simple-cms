@@ -13,6 +13,12 @@ class ContentSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->isProduction()) {
+            $this->command?->error('Content seeder should not be run in production.');
+
+            return;
+        }
+
         // Create Categories
         $categories = [
             [
@@ -189,7 +195,7 @@ class ContentSeeder extends Seeder
             [
                 'title' => 'About Us',
                 'slug' => 'about',
-                'excerpt' => 'Learn more about Laravel Simple CMS and our mission.',
+                'excerpt' => 'Learn more about Simple CMS and our mission.',
                 'content' => $this->getAboutPageContent(),
                 'is_published' => true,
                 'sort_order' => 1,
@@ -877,7 +883,7 @@ HTML;
     private function getAboutPageContent(): string
     {
         return <<<'HTML'
-<p>Welcome to <strong>Laravel Simple CMS</strong>, a demonstration of a modern content management system built with cutting-edge web technologies.</p>
+<p>Welcome to <strong>Simple CMS</strong>, a demonstration of a modern content management system built with cutting-edge web technologies.</p>
 
 <h2>About This Project</h2>
 <p>This CMS showcases best practices in Laravel development, featuring a clean architecture, intuitive admin panel, and a beautifully designed frontend.</p>
@@ -885,7 +891,7 @@ HTML;
 <h2>Technology Stack</h2>
 <ul>
 <li><strong>Laravel 12</strong> — The PHP framework for web artisans</li>
-<li><strong>Filament PHP 4</strong> — A powerful admin panel builder</li>
+<li><strong>Filament PHP 5</strong> — A powerful admin panel builder</li>
 <li><strong>DaisyUI 5</strong> — Beautiful UI components built on Tailwind CSS</li>
 <li><strong>Tailwind CSS 4</strong> — A utility-first CSS framework</li>
 </ul>
@@ -903,7 +909,7 @@ HTML;
 <h2>Open Source</h2>
 <p>This project is open source and available for learning, customization, and use in your own projects.</p>
 
-<p>Thank you for exploring Laravel Simple CMS!</p>
+<p>Thank you for exploring Simple CMS!</p>
 HTML;
     }
 
@@ -912,7 +918,7 @@ HTML;
         return <<<'HTML'
 <p><em>Last updated: December 2025</em></p>
 
-<p>This Privacy Policy describes how Laravel Simple CMS ("we," "us," or "our") collects, uses, and shares information when you use our website.</p>
+<p>This Privacy Policy describes how Simple CMS ("we," "us," or "our") collects, uses, and shares information when you use our website.</p>
 
 <h2>Information We Collect</h2>
 
@@ -967,7 +973,7 @@ HTML;
         return <<<'HTML'
 <p><em>Last updated: December 2025</em></p>
 
-<p>Please read these Terms of Service ("Terms") carefully before using the Laravel Simple CMS website.</p>
+<p>Please read these Terms of Service ("Terms") carefully before using the Simple CMS website.</p>
 
 <h2>Acceptance of Terms</h2>
 <p>By accessing or using our website, you agree to be bound by these Terms. If you disagree with any part of the terms, you may not access the website.</p>
@@ -994,7 +1000,7 @@ HTML;
 <p>Our website and its content are provided "as is" without warranties of any kind. We do not guarantee that the website will be uninterrupted, secure, or error-free.</p>
 
 <h2>Limitation of Liability</h2>
-<p>To the fullest extent permitted by law, Laravel Simple CMS shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the website.</p>
+<p>To the fullest extent permitted by law, Simple CMS shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the website.</p>
 
 <h2>Links to Other Websites</h2>
 <p>Our website may contain links to third-party websites. We are not responsible for the content or practices of these external sites.</p>
@@ -1024,7 +1030,7 @@ HTML;
 <p>Stay connected and follow us on social media for the latest updates:</p>
 <ul>
 <li>X: <a href="https://x.com/ozdemirdev">@ozdemirdev</a></li>
-<li>GitHub: <a href="https://github.com/ozdemirburak/laravel-simple-cms">ozdemirburak/laravel-simple-cms</a></li>
+<li>GitHub: <a href="https://github.com/ozdemirburak/simple-cms">ozdemirburak/simple-cms</a></li>
 </ul>
 
 <h2>Feedback</h2>

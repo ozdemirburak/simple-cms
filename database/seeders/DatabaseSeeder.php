@@ -21,25 +21,33 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        if (app()->isProduction()) {
+            $this->command?->error('Seeder should not be run in production. Use "php artisan tinker" to create users manually.');
+
+            return;
+        }
+
         // Create admin user
-        User::firstOrCreate(
+        $admin = User::firstOrCreate(
             ['email' => 'admin@admin.com'],
             [
                 'name' => 'Admin',
-                'role' => UserRole::Admin,
                 'password' => bcrypt('password'),
             ]
         );
+        $admin->role = UserRole::Admin;
+        $admin->save();
 
         // Create editor user
-        User::firstOrCreate(
+        $editor = User::firstOrCreate(
             ['email' => 'editor@editor.com'],
             [
                 'name' => 'Editor',
-                'role' => UserRole::Editor,
                 'password' => bcrypt('password'),
             ]
         );
+        $editor->role = UserRole::Editor;
+        $editor->save();
 
         // To seed with sample content, run: php artisan db:seed --class=ContentSeeder
     }

@@ -32,7 +32,7 @@ class PageForm
                 Section::make('Settings')
                     ->schema([
                         Select::make('parent_id')
-                            ->relationship('parent', 'title')
+                            ->relationship('parent', 'title', fn ($query, $record) => $record ? $query->where('id', '!=', $record->id) : $query)
                             ->searchable()
                             ->preload(),
                         TextInput::make('slug')

@@ -30,6 +30,7 @@ class UserForm
                             ->revealable()
                             ->dehydrated(fn ($state) => filled($state))
                             ->required(fn (string $operation): bool => $operation === 'create')
+                            ->minLength(8)
                             ->confirmed()
                             ->maxLength(255),
                         TextInput::make('password_confirmation')

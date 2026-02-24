@@ -2,7 +2,6 @@
     @php
         $isContactPage = $page->slug === 'contact';
     @endphp
-
     <!-- Page Header -->
     <section class="bg-base-200/50 border-b border-base-300">
         <div class="container mx-auto px-6 py-12">
@@ -31,7 +30,6 @@
             </div>
         </div>
     </section>
-
     <!-- Page Content -->
     <div class="container mx-auto px-6 py-12">
         @if($isContactPage)
@@ -88,7 +86,6 @@
             </div>
         @endif
     </div>
-
     <!-- Subpages -->
     @if($page->children->count())
         <section class="bg-base-200/30 border-t border-base-300 py-12">

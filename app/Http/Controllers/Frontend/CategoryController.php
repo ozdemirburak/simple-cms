@@ -18,6 +18,12 @@ class CategoryController extends Controller
             ->latest('published_at')
             ->paginate(12);
 
-        return view('frontend.categories.show', compact('category', 'articles'));
+        $otherCategories = Category::where('is_active', true)
+            ->where('id', '!=', $category->id)
+            ->whereHas('articles', fn ($q) => $q->published())
+            ->withCount(['articles' => fn ($q) => $q->published()])
+            ->get();
+
+        return view('frontend.categories.show', compact('category', 'articles', 'otherCategories'));
     }
 }

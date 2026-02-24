@@ -23,7 +23,6 @@ class User extends Authenticatable implements FilamentUser
     protected $fillable = [
         'name',
         'email',
-        'role',
         'password',
     ];
 
@@ -33,7 +32,7 @@ class User extends Authenticatable implements FilamentUser
      * @var array<string, mixed>
      */
     protected $attributes = [
-        'role' => 'editor',
+        'role' => UserRole::Editor,
     ];
 
     /**
@@ -62,7 +61,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        return $this->isAdmin() || $this->isEditor();
     }
 
     public function isAdmin(): bool

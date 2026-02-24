@@ -15,10 +15,10 @@ class NavigationComposer
 
     public function compose(View $view): void
     {
-        $pages = Page::published()
+        $pages = cache()->remember('nav_pages', 300, fn () => Page::published()
             ->roots()
             ->orderBy('sort_order')
-            ->get();
+            ->get());
 
         $view->with([
             'navPages' => $pages->filter(fn ($p) => ! in_array($p->slug, self::$footerOnlySlugs)),

@@ -22,6 +22,11 @@ class ArticleViewResource extends Resource
 
     protected static ?string $navigationLabel = 'Article Views';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
     public static function table(Table $table): Table
     {
         return ArticleViewsTable::configure($table);
