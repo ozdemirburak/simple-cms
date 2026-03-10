@@ -11,6 +11,7 @@ use Stevebauman\Purify\Facades\Purify;
 class Article extends Model
 {
     protected $fillable = [
+        'user_id',
         'category_id',
         'title',
         'slug',
@@ -29,6 +30,11 @@ class Article extends Model
     protected static function booted(): void
     {
         static::creating(function (Article $article) {
+            // Auto-assign current user ID when creating
+            if (empty($article->user_id) && auth()->check()) {
+                $article->user_id = auth()->id();
+            }
+
             if (empty($article->slug)) {
                 $baseSlug = Str::slug($article->title);
                 $slug = $baseSlug;
@@ -50,6 +56,11 @@ class Article extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function views(): HasMany
