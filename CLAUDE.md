@@ -196,6 +196,9 @@ $user->isEditor(); // true if editor
 - **Route Constraints**: All slug routes have `[a-z0-9\-]+` regex constraints
 - **File Upload Validation**: Featured images require explicit MIME type allowlist
 - **Mass Assignment**: `role` field is excluded from `$fillable` on User model to prevent privilege escalation
+- **Ownership Authorization**: Articles, Pages and Media now track `user_id` ownership
+- **Policy Enforcement**: Laravel Policies ensure only admins or resource owners can update/delete records
+- **Query Scoping**: Non-admin users can only view their own resources in Filament admin panel
 
 ### Database
 - SQLite by default (`database/database.sqlite`)
