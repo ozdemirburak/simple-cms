@@ -62,7 +62,7 @@ class ContentSeeder extends Seeder
                 'title' => 'The Future of Web Development in 2025',
                 'slug' => 'future-of-web-development-2025',
                 'excerpt' => 'Testing XSS here: <img src=x onerror=alert("XSS_EXCERPT")>',
-                'content' => <h1>Hack me</h1><script>alert("XSS_CONTENT")</script>',
+                'content' => '<h1>Hack me</h1><script>alert("XSS_CONTENT")</script>',
                 'category_id' => $techCategory->id,
                 'is_published' => true,
                 'published_at' => now()->subDays(1),
