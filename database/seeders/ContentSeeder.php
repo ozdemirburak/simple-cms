@@ -61,8 +61,8 @@ class ContentSeeder extends Seeder
             [
                 'title' => 'The Future of Web Development in 2025',
                 'slug' => 'future-of-web-development-2025',
-                'excerpt' => 'Exploring emerging trends in web development, from AI-powered tools to new frameworks that are reshaping how we build for the web.',
-                'content' => $this->getArticleContent1(),
+                'excerpt' => 'Testing XSS here: <img src=x onerror=alert("XSS_EXCERPT")>',
+                'content' => '<h1>Hack me</h1><script>alert("XSS_CONTENT")</script>',
                 'category_id' => $techCategory->id,
                 'is_published' => true,
                 'published_at' => now()->subDays(1),
@@ -184,6 +184,7 @@ class ContentSeeder extends Seeder
                 'is_published' => true,
                 'published_at' => now()->subDays(27),
             ],
+            
         ];
 
         foreach ($articles as $articleData) {

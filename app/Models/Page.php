@@ -11,6 +11,7 @@ use Stevebauman\Purify\Facades\Purify;
 class Page extends Model
 {
     protected $fillable = [
+        'user_id',
         'parent_id',
         'title',
         'slug',
@@ -28,6 +29,11 @@ class Page extends Model
     protected static function booted(): void
     {
         static::creating(function (Page $page) {
+            // Auto-assign current user ID when creating
+            if (empty($page->user_id) && auth()->check()) {
+                $page->user_id = auth()->id();
+            }
+
             if (empty($page->slug)) {
                 $baseSlug = Str::slug($page->title);
                 $slug = $baseSlug;
@@ -52,6 +58,11 @@ class Page extends Model
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Page::class, 'parent_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function children(): HasMany
